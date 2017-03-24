@@ -1,0 +1,95 @@
+{% extends "common/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+{% autoescape off %}
+    <div class="col-xs-12">
+        <h3 class="pull-left">대원 등록</h3>
+        <hr class="clear"/>
+    </div>
+
+    <div class="col-xs-12">
+
+        <form action="{% url 'attendance:add_person' %}" class="form-horizontal" method="post" onsubmit="return valid_check();">
+            {% csrf_token %}
+            <input type="hidden" name="practice_id" value="{{ practice.id }}" />
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    <div class="form-group">
+                        <label for="category" class="col-xs-3 control-label">이름</label>
+                        <div class="col-xs-6">
+                            <input name="name" type="text" class="form-control input-sm" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="category" class="col-xs-3 control-label">파트</label>
+                        <div class="col-xs-9">
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="part" value="S" checked="checked"> 소프라노
+                                </label>
+                                <label>
+                                    <input type="radio" name="part" value="A" {% if part == 'A' %}checked{% endif %}> 알토
+                                </label>
+                                <label>
+                                    <input type="radio" name="part" value="T" {% if part == 'T' %}checked{% endif %}> 테너
+                                </label>
+                                <label>
+                                    <input type="radio" name="part" value="B" {% if part == 'B' %}checked{% endif %}> 베이스
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="category" class="col-xs-3 control-label">생년월일</label>
+                        <div class="col-xs-6">
+                            <input id="birth" name="birth" type="number" class="form-control input-sm" placeholder="YYMMDD 6자리 입력" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="category" class="col-xs-3 control-label">전화번호</label>
+                        <div class="col-xs-6">
+                            <input name="phone" type="tel" class="form-control input-sm" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-xs-12 text-center">
+                            <button type="submit" class="btn btn-primary">등록</button>
+                            <a href="{% url 'attendance:choir_list' practice.id part %}" class="btn btn-default">취소</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </form>
+    </div>
+{% endautoescape %}
+{% endblock %}
+
+{% block scripts %}
+
+    <script type="text/javascript">
+        function valid_check() {
+            var re = /[0-9]+/;
+            var birth = $("#birth").val();
+            if(re.test(birth)){
+                if(birth.length != 6) {
+                    alert("YYMMDD 형태로 입력해주세요.");
+                    return false;
+                }
+                return true;
+            } else {
+                return false;
+            }
+
+        }
+        $(document).ready(function () {
+
+        });
+    </script>
+{% endblock %}

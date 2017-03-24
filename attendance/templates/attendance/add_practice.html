@@ -1,0 +1,63 @@
+{% extends "common/base.html" %}
+
+{% block css %}
+    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet"/>
+    <style type="text/css">
+    </style>
+
+{% endblock %}
+
+{% block content %}
+<div class="col-xs-12">
+    <div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                새연습 일정 추가
+            </div>
+            <div class="panel-body">
+                <form action="{% url 'attendance:add_practice' %}" class="form-horizontal" id="contractForm" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">날짜</label>
+                        <div class="col-xs-9">
+                            <input name="practice_dt" type="text" class="form-control input-sm" value='{{ practice_dt|date:"Y-m-d" }}' />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">연습곡</label>
+                        <div class="col-xs-9">
+                            <select id="song" name="song" class="form-control input-sm">
+                                <option></option>
+                                {% for item in song_list %}
+                                    <option value="{{ item.no }}">{{ item.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <div class="col-xs-12 text-center">
+                            <button type="submit" class="btn btn-primary">저장</button>
+                            <a href="{% url 'attendance:home' %}" class="btn btn-default">취소</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#song").select2({
+                placeholder: "연습곡을 선택해주세요.",
+                allowClear: true
+            });
+        });
+    </script>
+{% endblock %}

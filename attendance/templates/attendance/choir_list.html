@@ -1,0 +1,84 @@
+{% extends "common/base.html" %}
+
+{% load staticfiles %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'lib/bootswitch/css/bootstrap3/bootstrap-switch.min.css' %}" />
+    <style type="text/css">
+        label { color:#fff; padding:6px; }
+        .clear { clear:both; }
+        table th, td { text-align: center; }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+<div class="col-xs-12">
+    <label class="{{ label_color }}">{{ part_string }}</label>
+    <div class="pull-right">
+        <a href="{% url 'attendance:add_person' %}?part={{ part }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"> 대원추가</span>
+        </a>
+    </div>
+
+    <div class="panel clear">
+        <table class="table table-condensed">
+            <thead>
+            <th>이름</th>
+            <th>생년월일</th>
+            <th>수정</th>
+            <th>출석체크</th>
+            </thead>
+            <tbody>
+                {% for item in person_list %}
+                    <tr>
+                        <td>{{ item.person.name }}</td>
+                        <td>{{ item.person.birth }}</td>
+                        <td><a href="{% url 'attendance:edit_person' item.person.id %}" class="btn btn-success btn-xs">수정</a></td>
+                        <td>
+                            <input type="checkbox" data-on-text="출석" data-off-text="결석" data-size="mini" data-person-id="{{ item.person.id }}" data-practice-id="{{ item.practice.id }}" {% if item.is_join == True %}checked{% endif %}>
+                        </td>
+                    </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">
+                        <p></p>
+                        <p>등록된 대원이 없습니다.</p>
+                        <p></p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'lib/bootswitch/js/bootstrap-switch.min.js' %}"></script>
+    <script type="text/javascript">
+        function updateAttendance(e, state) {
+            $.ajax({
+                url: "{% url 'attendance:update_attendance' %}",
+                type: 'POST',
+                data: {
+                    'person_id': $(this).attr('data-person-id'),
+                    'practice_id': $(this).attr('data-practice-id'),
+                    'is_join': state,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(error) {
+                    alert('에러가 발생하였습니다. 다시 시도해주세요.');
+                    //location.reload();
+                }
+            });
+        }
+        $(document).ready(function() {
+            $("input:checkbox").bootstrapSwitch();
+            $("input:checkbox").on('switchChange.bootstrapSwitch', updateAttendance);
+
+        });
+    </script>
+{% endblock %}

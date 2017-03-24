@@ -1,0 +1,75 @@
+{% extends "common/base.html" %}
+
+{% block css %}
+    <style type="text/css">
+        div.attendance-group a { width:100%; }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+<div class="col-xs-12">
+    <div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                오늘의 연습곡
+                <a href="{% url 'attendance:add_practice' %}" id="btn_new_practice" class="btn btn-default btn-xs pull-right">새연습 일정 추가</a>
+            </div>
+            <div class="panel-body">
+                {% if last_practice %}
+                <h5>날짜 : {{ last_practice.practice_dt|date:"Y-m-d" }}</h5>
+                <h5>제목 : {{ last_practice.song.title }}</h5>
+                <h5>작사/작곡 : {{ last_practice.song.author }}</h5>
+                <h5>소요시간 : {{ last_practice.song.play_time }}</h5>
+                <h5>
+                    출석 대원수 : {{ attendance_info.attendance_count }}명
+                    ( S: {{ attendance_info.s_count }}, A: {{ attendance_info.a_count }}, T: {{ attendance_info.t_count }}, B: {{ attendance_info.b_count }} )
+                </h5>
+                {% else %}
+                <h5>마지막으로 진행한 연습이 없습니다.</h5>
+                <h5>새 연습 일정을 추가해주세요.</h5>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                이번달 생일자
+            </div>
+            <div class="panel-body">
+                <ul>
+                {% for person in birthday_list %}
+                    <li>{{ person.name }} {{ person.birth_monthday }} / {{ person.get_part_display }} </li>
+                {% empty %}
+                    <p>이번달 생일자가 없습니다.</p>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% if last_practice %}
+    <div class="attendance-group">
+        <p>
+            <a href="{% url 'attendance:choir_list' last_practice.id 'S' %}" class="btn btn-info btn-lg">소프라노 출석부</a>
+        </p>
+        <p>
+            <a href="{% url 'attendance:choir_list' last_practice.id 'A' %}" class="btn btn-warning btn-lg">알토 출석부</a>
+        </p>
+        <p>
+            <a href="{% url 'attendance:choir_list' last_practice.id 'T' %}" class="btn btn-success btn-lg">테너 출석부</a>
+        </p>
+        <p>
+            <a href="{% url 'attendance:choir_list' last_practice.id 'B' %}" class="btn btn-primary btn-lg">베이스 출석부</a>
+        </p>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $(document).ready(function() {
+    });
+</script>
+{% endblock %}

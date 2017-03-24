@@ -1,0 +1,67 @@
+{% extends "common/base.html" %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+{% autoescape off %}
+    <div class="col-xs-12">
+        <h3 class="pull-left">악보 정보 수정</h3>
+        <hr class="clear"/>
+    </div>
+
+    <div class="col-xs-12">
+
+        <form action="{% url 'song:edit' song.no %}" class="form-horizontal" method="post">
+            {% csrf_token %}
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    <div class="form-group">
+                        <label for="category" class="col-xs-4 control-label">NO</label>
+                        <div class="col-xs-8">
+                            <input name="no" type="text" class="form-control input-sm" value="{{ song.no }}" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="category" class="col-xs-4 control-label">제목</label>
+                        <div class="col-xs-8">
+                            <input name="title" type="text" class="form-control input-sm" value="{{ song.title }}" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="category" class="col-xs-4 control-label">작사/작곡</label>
+                        <div class="col-xs-8">
+                            <input name="author" type="text" class="form-control input-sm" value="{{ song.author }}" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="category" class="col-xs-4 control-label">소요시간</label>
+                        <div class="col-xs-8">
+                            <input name="play_time" type="text" class="form-control input-sm" value="{{ song.play_time }}" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-xs-12 text-center">
+                            <button type="submit" class="btn btn-primary">등록</button>
+                            <a href="{% url 'song:home' %}" class="btn btn-default">취소</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </form>
+    </div>
+{% endautoescape %}
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+    </script>
+{% endblock %}

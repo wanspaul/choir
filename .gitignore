@@ -87,3 +87,14 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+
+# idea
+.idea/*
+
+# real setting
+production.py
+
+# tests
+tests.py
+
