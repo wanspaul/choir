@@ -9,5 +9,8 @@ urlpatterns = [
     url(r'^add_person/$', views.PersonAddView.as_view(), name='add_person'),
     url(r'^edit_person/(?P<person_id>\d+)$', views.PersonEditView.as_view(), name='edit_person'),
     url(r'^update_attendance/$', views.AttendanceEditView.as_view(), name='update_attendance'),
+    url(r'^make_inactive_member/$', views.InactivePersonView.as_view(), name='make_inactive_member'),
+    url(r'^make_active_member/$', views.ActivePersonView.as_view(), name='make_active_member'),
+    url(r'^delete_person/$', views.PersonDeleteView.as_view(), name='delete_person'),
 
 ]

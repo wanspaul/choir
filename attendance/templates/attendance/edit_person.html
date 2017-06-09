@@ -7,7 +7,6 @@
 {% autoescape off %}
     <div class="col-xs-12">
         <h3 class="pull-left">대원 정보 수정</h3>
-        <hr class="clear"/>
     </div>
 
     <div class="col-xs-12">
@@ -21,7 +20,7 @@
 
                     <div class="form-group">
                         <label for="category" class="col-xs-3 control-label">이름</label>
-                        <div class="col-xs-6">
+                        <div class="col-xs-9">
                             <input name="name" type="text" class="form-control input-sm" value="{{ person.name }}" />
                         </div>
                     </div>
@@ -35,6 +34,7 @@
                                 <label>
                                     <input type="radio" name="part" value="A" {% if person.part == 'A' %}checked{% endif %}> 알토
                                 </label>
+                                <br />
                                 <label>
                                     <input type="radio" name="part" value="T" {% if person.part == 'T' %}checked{% endif %}> 테너
                                 </label>
@@ -46,21 +46,29 @@
                     </div>
                     <div class="form-group">
                         <label for="category" class="col-xs-3 control-label">생년월일</label>
-                        <div class="col-xs-6">
+                        <div class="col-xs-9">
                             <input id="birth" name="birth" type="number" class="form-control input-sm" value="{{ person.birth }}" placeholder="YYMMDD 6자리 입력" />
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="category" class="col-xs-3 control-label">전화번호</label>
-                        <div class="col-xs-6">
+                        <div class="col-xs-9">
                             <input name="phone" type="tel" class="form-control input-sm" value="{{ person.phone }}" />
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <div class="col-xs-12 text-center">
-                            <button type="submit" class="btn btn-primary">변경 저장</button>
+                        <div class="col-xs-6 text-left">
+                            <button type="submit" class="btn btn-primary">저장</button>
                             <a href="{% url 'attendance:choir_list' practice.id person.part %}" class="btn btn-default">취소</a>
+                        </div>
+                        <div class="col-xs-6 text-right">
+                            {% if person.is_active %}
+                            <button id="btn_inactive_member" type="button" class="btn btn-warning">휴면대원처리</button>
+                            {% else %}
+                            <button id="btn_active_member" type="button" class="btn btn-warning">휴면해제</button>
+                            {% endif %}
+                            <button id="btn_delete" type="button" class="btn btn-danger">삭제</button>
                         </div>
                     </div>
 
@@ -88,8 +96,66 @@
             }
 
         }
-        $(document).ready(function () {
 
+        function make_inactive_member() {
+            $.ajax({
+                url: "{% url 'attendance:make_inactive_member' %}",
+                type: 'POST',
+                data: {
+                    'person_id': {{ person.id }}
+                },
+                success: function(response) {
+                    location.href = "{% url 'attendance:choir_list' practice.id person.part %}";
+                },
+                error: function(error) {
+                    alert('에러가 발생하였습니다. 다시 시도해주세요.');
+                    //location.reload();
+                }
+            });
+        }
+
+        function make_active_member() {
+            $.ajax({
+                url: "{% url 'attendance:make_active_member' %}",
+                type: 'POST',
+                data: {
+                    'person_id': {{ person.id }}
+                },
+                success: function(response) {
+                    location.href = "{% url 'attendance:choir_list' practice.id person.part %}";
+                },
+                error: function(error) {
+                    alert('에러가 발생하였습니다. 다시 시도해주세요.');
+                    //location.reload();
+                }
+            });
+        }
+
+        function delete_person() {
+
+            if(!confirm("대원정보를 삭제하시겠습니까?"))
+                return false;
+
+            $.ajax({
+                url: "{% url 'attendance:delete_person' %}",
+                type: 'POST',
+                data: {
+                    'person_id': {{ person.id }}
+                },
+                success: function(response) {
+                    location.href = "{% url 'attendance:choir_list' practice.id person.part %}";
+                },
+                error: function(error) {
+                    alert('에러가 발생하였습니다. 다시 시도해주세요.');
+                    //location.reload();
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $("#btn_inactive_member").on("click", make_inactive_member);
+            $("#btn_active_member").on("click", make_active_member);
+            $("#btn_delete").on("click", delete_person);
         });
     </script>
 {% endblock %}

@@ -14,7 +14,7 @@
 
 {% block content %}
 <div class="col-xs-12">
-    <label class="{{ label_color }}">{{ part_string }}</label>
+    <label class="{{ label_color }}">{{ part_string }} <span class="badge">{{ person_list|length }}</span></label>
     <div class="pull-right">
         <a href="{% url 'attendance:add_person' %}?part={{ part }}" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"> 대원추가</span>
         </a>
@@ -25,6 +25,7 @@
             <thead>
             <th>이름</th>
             <th>생년월일</th>
+            <th>출석률</th>
             <th>수정</th>
             <th>출석체크</th>
             </thead>
@@ -33,6 +34,7 @@
                     <tr>
                         <td>{{ item.person.name }}</td>
                         <td>{{ item.person.birth }}</td>
+                        <td>{{ item.join_rate }}%</td>
                         <td><a href="{% url 'attendance:edit_person' item.person.id %}" class="btn btn-success btn-xs">수정</a></td>
                         <td>
                             <input type="checkbox" data-on-text="출석" data-off-text="결석" data-size="mini" data-person-id="{{ item.person.id }}" data-practice-id="{{ item.practice.id }}" {% if item.is_join == True %}checked{% endif %}>
@@ -40,7 +42,7 @@
                     </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="4" class="text-center">
+                    <td colspan="5" class="text-center">
                         <p></p>
                         <p>등록된 대원이 없습니다.</p>
                         <p></p>
@@ -49,6 +51,37 @@
                 {% endfor %}
             </tbody>
         </table>
+        <hr/>
+        <h4>휴면대원</h4>
+        <table class="table table-condensed">
+            <thead>
+            <th>이름</th>
+            <th>생년월일</th>
+            <th>수정</th>
+            <th></th>
+            </thead>
+            <tbody>
+            {% for item in inactive_person_list %}
+                <tr>
+                    <td>{{ item.person.name }}</td>
+                    <td>{{ item.person.birth }}</td>
+                    <td><a href="{% url 'attendance:edit_person' item.person.id %}" class="btn btn-success btn-xs">수정</a></td>
+                    <td>
+                        <button class="btn btn-xs btn-warning" onclick="make_active_member({{ item.person.id }});">휴면해제</button>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <p></p>
+                        <p>등록된 대원이 없습니다.</p>
+                        <p></p>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
     </div>
 </div>
 {% endblock %}
@@ -75,6 +108,24 @@
                 }
             });
         }
+
+        function make_active_member(person_id) {
+            $.ajax({
+                url: "{% url 'attendance:make_active_member' %}",
+                type: 'POST',
+                data: {
+                    'person_id': person_id
+                },
+                success: function(response) {
+                    location.reload();
+                },
+                error: function(error) {
+                    alert('에러가 발생하였습니다. 다시 시도해주세요.');
+                    //location.reload();
+                }
+            });
+        }
+
         $(document).ready(function() {
             $("input:checkbox").bootstrapSwitch();
             $("input:checkbox").on('switchChange.bootstrapSwitch', updateAttendance);

@@ -16,6 +16,7 @@ class Person(models.Model):
     birth = models.CharField(max_length=10)
     birth_monthday = models.CharField(max_length=4, default='')
     part = models.CharField(max_length=1, choices=PART_CHOICES)
+    is_active = models.BooleanField(default=True)
     create_dt = models.DateTimeField(default=timezone.now)
 
 

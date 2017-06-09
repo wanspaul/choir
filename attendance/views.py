@@ -94,12 +94,33 @@ class PracticeAddView(View):
 class ChoirListView(View):
 
     def get(self, request, practice_id, part):
-
+        year = str(datetime.now().year)
         person_list = Attendance.objects.select_related('person', 'practice').filter(
-            practice__id=practice_id, person__part=part
+            practice__id=practice_id, person__part=part, person__is_active=True
         ).order_by('person__name')
 
-        logging.info(len(person_list))
+        inactive_person_list = Attendance.objects.select_related('person', 'practice').filter(
+            practice__id=practice_id, person__part=part, person__is_active=False
+        ).order_by('person__name')
+
+        attendance_info_list = Attendance.objects.select_related('person', 'practice').values('person').filter(
+            person__part=part, practice__practice_dt__istartswith=year
+        ).annotate(
+            join_count=Count(Case(When(is_join=True, then=1))),
+            absent_count=Count(Case(When(is_join=False, then=1))),
+        )
+
+        attendance_map = {}
+        for attendance_info in attendance_info_list:
+            key = 'P{}'.format(attendance_info['person'])
+            practice_count = attendance_info['join_count'] + attendance_info['absent_count']
+            value = round(attendance_info['join_count'] * 100 / practice_count)
+            attendance_map[key] = value
+        # logging.info(person_list)
+
+        for person in person_list:
+            key = 'P{}'.format(person.person_id)
+            setattr(person, 'join_rate', attendance_map[key])
 
         if part == 'S':
             part_string = '소프라노'
@@ -121,7 +142,8 @@ class ChoirListView(View):
             'part': part,
             'part_string': part_string,
             'label_color': label_color,
-            'person_list': person_list
+            'person_list': person_list,
+            'inactive_person_list': inactive_person_list,
         }
 
         return TemplateResponse(request, 'attendance/choir_list.html', context)
@@ -180,18 +202,18 @@ class AttendanceEditView(APIView):
         practice_id = request.POST.get('practice_id')
         is_join = request.POST.get('is_join')
 
-        attendance = Attendance.objects.get(person=person_id, practice=practice_id)
-
-        if is_join == 'true':
-            attendance.is_join = True
-        else:
-            attendance.is_join = False
-
-        attendance.save()
-
         api_result = APIResult()
 
-        if False:
+        try:
+            attendance = Attendance.objects.get(person=person_id, practice=practice_id)
+
+            if is_join == 'true':
+                attendance.is_join = True
+            else:
+                attendance.is_join = False
+
+            attendance.save()
+        except:
             api_result.status = APIStatusCode.ERROR
             api_result.message = APIStatusMessage.ERROR
 
@@ -226,3 +248,54 @@ class PersonEditView(View):
         )
 
         return HttpResponseRedirect(reverse('attendance:choir_list', kwargs={'practice_id': practice_id, 'part': origin_part}))
+
+
+class InactivePersonView(APIView):
+
+    def post(self, request):
+
+        person_id = request.POST.get('person_id')
+
+        api_result = APIResult()
+
+        try:
+            Person.objects.filter(pk=person_id).update(is_active=False)
+        except:
+            api_result.status = APIStatusCode.ERROR
+            api_result.message = APIStatusMessage.ERROR
+
+        return Response(APIResultSerializer(api_result).data)
+
+
+class ActivePersonView(APIView):
+
+    def post(self, request):
+
+        person_id = request.POST.get('person_id')
+
+        api_result = APIResult()
+
+        try:
+            Person.objects.filter(pk=person_id).update(is_active=True)
+        except:
+            api_result.status = APIStatusCode.ERROR
+            api_result.message = APIStatusMessage.ERROR
+
+        return Response(APIResultSerializer(api_result).data)
+
+
+class PersonDeleteView(APIView):
+
+    def post(self, request):
+
+        person_id = request.POST.get('person_id')
+
+        api_result = APIResult()
+
+        try:
+            Person.objects.filter(pk=person_id).delete()
+        except:
+            api_result.status = APIStatusCode.ERROR
+            api_result.message = APIStatusMessage.ERROR
+
+        return Response(APIResultSerializer(api_result).data)
