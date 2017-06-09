@@ -40,7 +40,7 @@ class AttendanceHomeView(View):
         first_date = date(today.year, today.month, 1).strftime('%m%d')
         last_date = date(today.year, today.month, last_day).strftime('%m%d')
         birthday_list = Person.objects.filter(
-            birth_monthday__gte=first_date, birth_monthday__lte=last_date).all()
+            birth_monthday__gte=first_date, birth_monthday__lte=last_date, is_active=True).all()
 
         logging.info(birthday_list)
         context = {

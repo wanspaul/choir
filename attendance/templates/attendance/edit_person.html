@@ -19,14 +19,14 @@
                 <div class="panel-body">
 
                     <div class="form-group">
-                        <label for="category" class="col-xs-3 control-label">이름</label>
-                        <div class="col-xs-9">
+                        <label for="category" class="col-xs-4 control-label">이름</label>
+                        <div class="col-xs-8">
                             <input name="name" type="text" class="form-control input-sm" value="{{ person.name }}" />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="category" class="col-xs-3 control-label">파트</label>
-                        <div class="col-xs-9">
+                        <label for="category" class="col-xs-4 control-label">파트</label>
+                        <div class="col-xs-8">
                             <div class="radio">
                                 <label>
                                     <input type="radio" name="part" value="S" checked="checked"> 소프라노
@@ -45,30 +45,30 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="category" class="col-xs-3 control-label">생년월일</label>
-                        <div class="col-xs-9">
+                        <label for="category" class="col-xs-4 control-label">생년월일</label>
+                        <div class="col-xs-8">
                             <input id="birth" name="birth" type="number" class="form-control input-sm" value="{{ person.birth }}" placeholder="YYMMDD 6자리 입력" />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="category" class="col-xs-3 control-label">전화번호</label>
-                        <div class="col-xs-9">
+                        <label for="category" class="col-xs-4 control-label">전화번호</label>
+                        <div class="col-xs-8">
                             <input name="phone" type="tel" class="form-control input-sm" value="{{ person.phone }}" />
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <div class="col-xs-6 text-left">
+                        <div class="col-xs-5 text-left">
                             <button type="submit" class="btn btn-primary">저장</button>
-                            <a href="{% url 'attendance:choir_list' practice.id person.part %}" class="btn btn-default">취소</a>
+                            <a href="{% url 'attendance:choir_list' practice.id person.part %}" class="btn btn-default brn-sm">취소</a>
                         </div>
-                        <div class="col-xs-6 text-right">
+                        <div class="col-xs-7 text-right">
                             {% if person.is_active %}
-                            <button id="btn_inactive_member" type="button" class="btn btn-warning">휴면대원처리</button>
+                            <button id="btn_inactive_member" type="button" class="btn btn-warning btn-sm">휴면대원처리</button>
                             {% else %}
-                            <button id="btn_active_member" type="button" class="btn btn-warning">휴면해제</button>
+                            <button id="btn_active_member" type="button" class="btn btn-warning btn-sm">휴면해제</button>
                             {% endif %}
-                            <button id="btn_delete" type="button" class="btn btn-danger">삭제</button>
+                            <button id="btn_delete" type="button" class="btn btn-danger btn-sm">삭제</button>
                         </div>
                     </div>
 
