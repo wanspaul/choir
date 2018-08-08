@@ -21,5 +21,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^attendance/', include('attendance.urls', namespace='attendance')),
     url(r'^song/', include('song.urls', namespace='song')),
+    url(r'^api/', include('api.urls', namespace='api')),
     url(r'^$', views.root),
 ]

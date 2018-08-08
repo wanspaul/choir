@@ -12,5 +12,4 @@ urlpatterns = [
     url(r'^make_inactive_member/$', views.InactivePersonView.as_view(), name='make_inactive_member'),
     url(r'^make_active_member/$', views.ActivePersonView.as_view(), name='make_active_member'),
     url(r'^delete_person/$', views.PersonDeleteView.as_view(), name='delete_person'),
-
 ]
