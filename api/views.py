@@ -27,3 +27,8 @@ class PersonDetailView(APIView):
         person = self.get_object(person_id)
         serializer = PersonSerializer(person)
         return Response(serializer.data)
+
+    def post(self, request, person_id):
+        person = self.get_object(person_id)
+        serializer = PersonSerializer(person)
+        return Response(serializer.data)
