@@ -27,13 +27,15 @@ class PersonDetailView(APIView):
             return Http404
 
     def get(self, request, person_id):
-        logger.info(request.GET)
+        logger.info(request.META)
+        logger.info(request.body.decode('utf-8'))
         person = self.get_object(person_id)
         serializer = PersonSerializer(person)
         return Response(serializer.data)
 
     def post(self, request, person_id):
-        logger.info(request.POST)
+        logger.info(request.META)
+        logger.info(request.body.decode('utf-8'))
         person = self.get_object(person_id)
         serializer = PersonSerializer(person)
         return Response(serializer.data)
